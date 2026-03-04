@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/mira/Desktop/coding/API/API.csproj": {}
+    "/Users/mira/Desktop/coding/ecommerce-typescript-dotnet/API/API.csproj": {}
   },
   "projects": {
-    "/Users/mira/Desktop/coding/API/API.csproj": {
+    "/Users/mira/Desktop/coding/ecommerce-typescript-dotnet/API/API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/mira/Desktop/coding/API/API.csproj",
+        "projectUniqueName": "/Users/mira/Desktop/coding/ecommerce-typescript-dotnet/API/API.csproj",
         "projectName": "API",
-        "projectPath": "/Users/mira/Desktop/coding/API/API.csproj",
+        "projectPath": "/Users/mira/Desktop/coding/ecommerce-typescript-dotnet/API/API.csproj",
         "packagesPath": "/Users/mira/.nuget/packages/",
-        "outputPath": "/Users/mira/Desktop/coding/API/obj/",
+        "outputPath": "/Users/mira/Desktop/coding/ecommerce-typescript-dotnet/API/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/mira/.nuget/NuGet/NuGet.Config"
@@ -43,12 +43,6 @@
       "frameworks": {
         "net10.0": {
           "targetAlias": "net10.0",
-          "dependencies": {
-            "Microsoft.AspNetCore.OpenApi": {
-              "target": "Package",
-              "version": "[10.0.3, )"
-            }
-          },
           "imports": [
             "net461",
             "net462",
