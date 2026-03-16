@@ -11,6 +11,11 @@ builder.Services.AddDbContext<StoreContext>(opt =>
 
 var app = builder.Build();
 
+app.UseCors(opt => 
+{
+    opt.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:3000", "https://localhost:3001");
+});
+
 app.MapControllers();
 
 DbInitializer.InitDb(app);
