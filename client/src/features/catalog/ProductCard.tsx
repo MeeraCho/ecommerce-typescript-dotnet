@@ -1,5 +1,5 @@
 import { Button, Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material"
-import type { Product } from "../../models/product"
+import type { Product } from "../../app/models/product"
 
 
 type Props = {

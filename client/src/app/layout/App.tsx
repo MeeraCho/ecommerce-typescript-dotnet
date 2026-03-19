@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Product } from "../models/product";
-import Catalog from "../features/catalog/Catalog";
+import Catalog from "../../features/catalog/Catalog";
 import { Box, Button, Container, Typography } from "@mui/material";
 
 function App() {
