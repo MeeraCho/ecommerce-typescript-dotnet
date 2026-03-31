@@ -8,9 +8,7 @@ import '@fontsource/roboto/700.css';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './app/routes/Routes.tsx';
 import { Provider } from 'react-redux';
-import { configureTheStore } from './app/store/store.ts';
-
-const store = configureTheStore();
+import { store } from './app/store/store.ts';
 
 
 createRoot(document.getElementById('root')!).render(

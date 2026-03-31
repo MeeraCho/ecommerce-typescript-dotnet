@@ -1,10 +1,10 @@
 import { Button, ButtonGroup, Typography } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { decrement, increment, type CounterState } from "./counterReducer";
+import { decrement, increment } from "./counterReducer";
+import { useAppDispatch, useAppSelector } from "../../app/store/store";
 
 export default function ContactPage() {
-  const data = useSelector((state: CounterState) => state.data)
-  const dispatch = useDispatch();
+  const {data} = useAppSelector(state => state.counter)
+  const dispatch = useAppDispatch();
   return (
     <>
       <Typography variant="h2">
