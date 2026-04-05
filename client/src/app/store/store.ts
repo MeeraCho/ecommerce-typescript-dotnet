@@ -1,12 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { counterSlice } from "../../features/contact/counterReducer";
 import { useDispatch, useSelector } from "react-redux";
+import { catalogApi } from "../../features/catalog/catalogApi";
 
 // store 만들기 
 export const store = configureStore({
     reducer: {
-        counter: counterSlice.reducer
-    }
+        counter: counterSlice.reducer,
+        [catalogApi.reducerPath]: catalogApi.reducer,
+    },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware().concat(catalogApi.middleware)
 })
 
 // 타입 정의 
