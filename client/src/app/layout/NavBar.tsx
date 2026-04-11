@@ -3,6 +3,7 @@ import {
   Badge,
   Box,
   IconButton,
+  LinearProgress,
   List,
   ListItem,
   Toolbar,
@@ -10,6 +11,7 @@ import {
 } from "@mui/material";
 import { DarkMode, LightMode, ShoppingCart } from "@mui/icons-material";
 import { NavLink } from "react-router-dom";
+import { useAppSelector } from "../store/store";
 
 const midLinks = [
   { title: "catalog", path: "/catalog" },
@@ -40,6 +42,8 @@ type Props = {
 };
 
 export default function NavBar({ darkMode, toggleDarkMode }: Props) {
+  const { isLoading } = useAppSelector(state => state.ui) 
+
   return (
     <AppBar position="fixed">
       <Toolbar sx={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -75,6 +79,11 @@ export default function NavBar({ darkMode, toggleDarkMode }: Props) {
           </List>
         </Box>
       </Toolbar>
+      {isLoading && (
+          <Box sx={{width: '100%'}}>
+              <LinearProgress color="secondary" />
+          </Box>
+      )}      
     </AppBar>
   );
 }

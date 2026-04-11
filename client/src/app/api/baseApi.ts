@@ -1,4 +1,5 @@
 import { fetchBaseQuery, type BaseQueryApi, type FetchArgs } from "@reduxjs/toolkit/query";
+import { startLoading, stopLoading } from "../layout/uiSlice";
 
 
 const customBaseQuery = fetchBaseQuery({
@@ -6,18 +7,24 @@ const customBaseQuery = fetchBaseQuery({
 });
 
 // Fake delay 
-const sleep = () => new Promise(resolve => setTimeout(resolve, 1000));
+const sleep = () => new Promise(resolve => setTimeout(resolve, 3000));
 
 // Wrapper 
 export const baseQueryWithErrorHandling = async (
 		args: string | FetchArgs, api: BaseQueryApi, extraOptions: object
     ) => {
+
+    // start loading
+    api.dispatch(startLoading());        
     
     // fake delay to show loading spinner
     await sleep();
     
     // actural API Request 
     const result = await customBaseQuery(args, api, extraOptions);
+
+    // stop loading
+    api.dispatch(stopLoading());    
         
     // error handling
     if (result.error) {
@@ -25,5 +32,5 @@ export const baseQueryWithErrorHandling = async (
         console.log({status, data});
     }
 
-    return result;
+    return result; 
 }
