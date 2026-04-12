@@ -15,6 +15,13 @@ export const store = configureStore({
         getDefaultMiddleware().concat(catalogApi.middleware)
 })
 
+store.subscribe(() => {
+    localStorage.setItem(
+        "darkMode",
+        JSON.stringify(store.getState().ui.darkMode)
+    );
+});
+
 // 타입 정의 
 export type RootState = ReturnType<typeof store.getState>
 export type AppDispatch = typeof store.dispatch
