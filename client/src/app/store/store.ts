@@ -21,4 +21,4 @@ export type AppDispatch = typeof store.dispatch
 
 // 커스텀 훅
 export const useAppDispatch = useDispatch.withTypes<AppDispatch>()
-export const useAppSelector = useSelector.withTypes<RootState>()
+export const useAppSelector = useSelector.withTypes<RootState>() 
