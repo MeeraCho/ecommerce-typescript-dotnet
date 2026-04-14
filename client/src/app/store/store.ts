@@ -3,12 +3,14 @@ import { counterSlice } from "../../features/contact/counterReducer";
 import { useDispatch, useSelector } from "react-redux";
 import { catalogApi } from "../../features/catalog/catalogApi";
 import { uiSlice } from "../layout/uiSlice";
+import { errorApi } from "../../features/about/errorApi";
 
 // store 만들기 
 export const store = configureStore({
     reducer: {
         counter: counterSlice.reducer,
         [catalogApi.reducerPath]: catalogApi.reducer,
+        [errorApi.reducerPath]: errorApi.reducer,
         ui: uiSlice.reducer
     },
     middleware: (getDefaultMiddleware) =>
