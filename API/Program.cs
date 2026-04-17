@@ -14,6 +14,7 @@ builder.Services.AddTransient<ExceptionMiddleware>();
 
 var app = builder.Build();
 
+//app.UseDeveloperExceptionPage();
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseCors(opt => 
 {

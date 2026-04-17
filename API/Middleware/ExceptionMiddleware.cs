@@ -21,10 +21,16 @@ public class ExceptionMiddleware(IHostEnvironment env, ILogger<ExceptionMiddlewa
 
     private async Task HandleException(HttpContext context, Exception ex)
     {
+        logger.LogError(ex, ex.Message);      
+        context.Response.ContentType = "application/json"; 
+        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+				
         var response = new ProblemDetails
         {
             Status = 500,
-            Detail = env.IsDevelopment() ? ex.StackTrace?.ToString() : null,
+            Detail = env.IsDevelopment() 
+                ? ex.StackTrace?.ToString() 
+                : null,
             Title = ex.Message
         };
 

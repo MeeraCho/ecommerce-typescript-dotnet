@@ -5,7 +5,6 @@ import { useState } from "react";
 export default function AboutPage() {
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
 	
-
   const [trigger400Error] = useLazyGet400ErrorQuery();
   const [trigger401Error] = useLazyGet401ErrorQuery();
   const [trigger404Error] = useLazyGet404ErrorQuery();
@@ -34,23 +33,23 @@ export default function AboutPage() {
       <ButtonGroup fullWidth>
         <Button 
           variant="contained" 
-          onClick={()=> trigger400Error().catch((err: unknown) => console.log(err))}
+          onClick={()=> trigger400Error().catch((err) => console.log(err))}
           >
             Test 400 Error
         </Button>
         <Button 
           variant="contained" 
-          onClick={()=> trigger401Error().catch((err: unknown) => console.log(err))}>
+          onClick={()=> trigger401Error().catch((err) => console.log(err))}>
             Test 401 Error
         </Button>  
         <Button 
           variant="contained" 
-          onClick={()=> trigger404Error().catch((err: unknown) => console.log(err))}>
+          onClick={()=> trigger404Error().catch((err) => console.log(err))}>
             Test 404 Error
         </Button> 
         <Button 
           variant="contained" 
-          onClick={()=> trigger500Error().unwrap().catch((err: unknown) => console.log(err))}>
+          onClick={()=> trigger500Error().unwrap().catch((err) => console.log(err))}>
             Test 500 Error
         </Button> 
         <Button 
