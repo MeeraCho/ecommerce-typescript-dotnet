@@ -55,7 +55,7 @@ export default function NavBar() {
 
         <List sx={{ display: "flex" }}>
           {midLinks.map(({ title, path }) => (
-            <ListItem key={path} sx={navStyles}>
+            <ListItem component={NavLink} to={path} key={path} sx={navStyles}>
               {title.toUpperCase()}
             </ListItem>
           ))}
