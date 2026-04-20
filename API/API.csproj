@@ -9,6 +9,8 @@
   <ItemGroup>
     <Folder Include="Data/" />
     <Folder Include="Data/Migrations/" />
+    <Folder Include="DTOs/" />
+    <Folder Include="Extensions/" />
   </ItemGroup>
 
   <ItemGroup>
