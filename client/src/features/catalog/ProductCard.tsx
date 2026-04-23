@@ -9,6 +9,7 @@ import {
 import type { Product } from "../../app/models/product";
 import { Link } from "react-router-dom";
 import { useAddBasketItemMutation } from "../basket/basketApi";
+import { currencyFormat } from "../../lib/utils";
 
 type Props = {
   product: Product;
@@ -34,15 +35,16 @@ export default function ProductCard({ product }: Props) {
         />
         <CardContent>
             <Typography
-            gutterBottom
-            sx={{ textTransform: "uppercase" }}
-            variant="subtitle2"
+                gutterBottom
+                sx={{ textTransform: "uppercase" }}
+                variant="subtitle2"
             >
-            {product.name}
-            </Typography>
-            <Typography variant="h6" sx={{ color: "secondary.main" }}>
-            ${(product.price / 100).toFixed(2)}
-            </Typography>
+            {product.name}</Typography>
+            <Typography 
+                variant="h6" 
+                sx={{ color: "secondary.main" }}
+            >
+            {currencyFormat(product.price)}</Typography>
         </CardContent>
         <CardActions sx={{ justifyContent: "space-between" }}>
             <Button 
@@ -52,9 +54,10 @@ export default function ProductCard({ product }: Props) {
                     quantity: 1
                 })}
             >Add to cart</Button>
-            <Button component={Link} to={`/catalog/${product.id}`}>
-            View
-            </Button>
+            <Button 
+                component={Link} 
+                to={`/catalog/${product.id}`}
+            > View</Button>
         </CardActions>
     </Card>
   );
