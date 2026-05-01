@@ -12,9 +12,16 @@ export const catalogApi = createApi({
         }),
         fetchProductDetails: builder.query<Product, number>({
             query: (productId) => `products/${productId}` //return string 
+        }),
+        fetchFilters: builder.query<{brands: string[], types: string[]}, void>({
+            query: () => 'products/filters'
         })
     })
 });
 
 // 자동 생성된 React hook을 꺼내서 export 하기
-export const {useFetchProductDetailsQuery, useFetchProductsQuery} = catalogApi;
+export const {
+    useFetchProductDetailsQuery, 
+    useFetchProductsQuery,
+    useFetchFiltersQuery
+} = catalogApi;
