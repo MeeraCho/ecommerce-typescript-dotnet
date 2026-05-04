@@ -10,6 +10,7 @@ type Props ={
 export default function CheckboxButtons({items, checked, onChange}:Props) {
     const [checkedItems, setCheckedItems] = useState(checked);
     
+    //state sync between a prop and local state
     useEffect(() => {
         setCheckedItems(checked);
     }, [checked]);
