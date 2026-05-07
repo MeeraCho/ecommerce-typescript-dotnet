@@ -1,9 +1,13 @@
 using API.Data;
+using API.Entities;
 using API.Middleware;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
+// 1.Create the app builder
 var builder = WebApplication.CreateBuilder(args);
 
+// 2.Register services(Dependency Injection) add services to the container
 builder.Services.AddControllers();
 builder.Services.AddDbContext<StoreContext>(opt => 
 {
@@ -11,10 +15,18 @@ builder.Services.AddDbContext<StoreContext>(opt =>
 });
 builder.Services.AddCors();
 builder.Services.AddTransient<ExceptionMiddleware>();
+builder.Services.AddIdentityApiEndpoints<User>(opt =>
+{
+    opt.User.RequireUniqueEmail = true;
 
+})
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<StoreContext>();
+
+// 3.Build the app
 var app = builder.Build();
 
-//app.UseDeveloperExceptionPage();
+// 4.Middleware pipeline - configure the HTTP request pipeline
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseCors(opt => 
 {
@@ -24,8 +36,15 @@ app.UseCors(opt =>
         .WithOrigins("https://localhost:3000", "https://localhost:3001");
 });
 
-app.MapControllers();
+app.UseAuthentication();
+app.UseAuthorization();
 
+// 5.Map endpoints
+app.MapControllers();
+app.MapGroup("api").MapIdentityApi<User>(); // api/login
+
+// 6.Initialize database
 DbInitializer.InitDb(app);
 
+// 7.Run the app
 app.Run();

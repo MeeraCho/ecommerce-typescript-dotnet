@@ -201,3 +201,4 @@
 /Users/mira/Desktop/coding/ecommerce-typescript-dotnet/API/bin/Debug/net10.0/runtimes/win/lib/net9.0/System.Windows.Extensions.dll
 /Users/mira/Desktop/coding/ecommerce-typescript-dotnet/API/obj/Debug/net10.0/API.csproj.AssemblyReference.cache
 /Users/mira/Desktop/coding/ecommerce-typescript-dotnet/API/obj/Debug/net10.0/API.csproj.Up2Date
+/Users/mira/Desktop/coding/ecommerce-typescript-dotnet/API/bin/Debug/net10.0/Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
