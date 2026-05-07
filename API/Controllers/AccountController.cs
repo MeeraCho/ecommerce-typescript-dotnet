@@ -27,5 +27,30 @@ namespace API.Controllers
 
             return Ok();
         }
+
+        [HttpGet("user-info")]
+        public async Task<ActionResult> GetUserInfo()
+        {
+            if (User.Identity?.IsAuthenticated == false) return NoContent();
+
+            var user = await signInManager.UserManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var roles = await signInManager.UserManager.GetRolesAsync(user);
+
+            return Ok(new
+            {
+                user.Email,
+                user.UserName,
+                Roles = roles
+            });
+        }
+
+        [HttpPost("logout")]
+        public async Task<ActionResult> Logout()
+        {
+            await signInManager.SignOutAsync();
+            return NoContent();
+        }
     }
 }
