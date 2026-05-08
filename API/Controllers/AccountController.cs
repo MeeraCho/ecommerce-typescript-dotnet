@@ -1,8 +1,10 @@
 using API.DTOs;
 using API.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -52,5 +54,43 @@ namespace API.Controllers
             await signInManager.SignOutAsync();
             return NoContent();
         }
+
+        [Authorize] // Only authenticated users can access this endpoint
+        [HttpPost("address")] //api/account/address
+        public async Task<ActionResult<Address>> CreateOrUpdateAddress(Address address)
+        {
+            // Get current logged-in user from database including their address
+            var user = await signInManager.UserManager.Users
+                .Include(x => x.Address)
+                .FirstOrDefaultAsync(x => x.UserName == User.Identity!.Name);
+                    
+            // Return 401 Unauthorized if user is not found
+            if (user == null) return Unauthorized();
+            
+            // Assign the incoming address to the current user
+            user.Address = address;
+            
+            // Save the updated user including address to the database
+            var result = await signInManager.UserManager.UpdateAsync(user);
+                    
+            // Return 400 BadRequest if updating the user fails
+            if (!result.Succeeded) return BadRequest("Problem updating user address");
+                    
+            // Return the updated address with HTTP 200 OK
+            return Ok(user.Address);
+        }
+
+        [Authorize]
+        [HttpGet("address")]
+        public async Task<ActionResult<Address>> GetSavedAddress()
+        {
+            var address = await signInManager.UserManager.Users
+                                .Where(x => x.UserName == User.Identity!.Name)
+                                .Select(x => x.Address)
+                                .FirstOrDefaultAsync();
+            if (address == null) return NoContent();
+            return address;
+        }
+
     }
 }
