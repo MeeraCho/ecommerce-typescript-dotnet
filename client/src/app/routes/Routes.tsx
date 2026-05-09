@@ -22,7 +22,7 @@ export const router = createBrowserRouter([
         {path: '/contact', element: <ContactPage />},
         {path: 'basket', element: <BasketPage />}, 
         {path: 'checkout', element: <CheckoutPage />},       
-        {path: '/server-error', element: <ServerError />},        	
+        {path: '/server-error', element: <ServerError />},                 	
         {path: '/not-found', element: <NotFound />},
         {path: '*', element: <Navigate replace to='/not-found' />}        
     ]

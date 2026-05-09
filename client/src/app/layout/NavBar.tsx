@@ -21,11 +21,6 @@ const midLinks = [
   { title: "contact", path: "/contact" },
 ];
 
-const rightLinks = [
-  { title: "login", path: "/login" },
-  { title: "register", path: "/register" },
-];
-
 const navStyles = {
   color: "inherit",
   typography: "h6",
@@ -70,13 +65,13 @@ export default function NavBar() {
               <ShoppingCart />
             </Badge>
           </IconButton>
-          <List sx={{ display: "flex" }}>
+          {/* <List sx={{ display: "flex" }}>
             {rightLinks.map(({ title, path }) => (
               <ListItem component={NavLink} to={path} key={path} sx={navStyles}>
                 {title.toUpperCase()}
               </ListItem>
             ))}
-          </List>
+          </List> */}
         </Box>
       </Toolbar>
       {isLoading && (

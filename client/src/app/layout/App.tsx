@@ -22,7 +22,7 @@ function App() {
       <CssBaseline>
         <NavBar   />
         <Box sx={{minHeight: '100vh', background: darkMode ? '#121212' : '#eaeaea'}}>
-          <Container maxWidth='xl' sx={{mt: 8}}>
+          <Container maxWidth='xl' sx={{mt: 10}}>
             <Outlet />
           </Container>
         </Box>
