@@ -9,7 +9,7 @@ import { router } from "../routes/Routes";
 
 const customBaseQuery = fetchBaseQuery({
   baseUrl: "https://localhost:5001/api",
-  credentials: 'include'
+  credentials: "include"
 });
 
 // Union type 정의 - 어떤 타입들이 가능한지 “정의” 1.string 2.object 3.validation error

@@ -1,8 +1,21 @@
 import { LockOutlined } from "@mui/icons-material";
 import { Box, Button, Container, Paper, TextField, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { loginSchema, type LoginSchema } from "../../lib/Schemas/loginSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useLoginMutation } from "./accountApi";
 
 export default function LoginForm() {
+    const [login, {isLoading}] = useLoginMutation();
+    const { register, handleSubmit, formState:{errors} } = useForm<LoginSchema>({
+        mode: 'onChange',
+        resolver: zodResolver(loginSchema)
+    });
+
+    const onSubmit = async (data: LoginSchema) => {
+        await login(data);
+    }
 
     return (
         <Container component={Paper} maxWidth='sm' sx={{ borderRadius: 3 }}>
@@ -13,6 +26,7 @@ export default function LoginForm() {
                 </Typography>
                 <Box
                     component='form'
+                    onSubmit={handleSubmit(onSubmit)}
                     width='100%'
                     display='flex'
                     flexDirection='column'
@@ -23,13 +37,23 @@ export default function LoginForm() {
                         fullWidth
                         label='Email'
                         autoFocus
+                        {...register('email')}
+                        error={!!errors.email}
+                        helperText={errors.email?.message}
                     />
                     <TextField
                         fullWidth
                         label='Password'
                         type="password"
+                        {...register('password')}
+                        error={!!errors.password}
+                        helperText={errors.password?.message}
                     />
-                    <Button variant="contained" type="submit">
+                    <Button 
+                        disabled={isLoading}
+                        variant="contained" 
+                        type="submit"
+                    >
                         Sign in
                     </Button>
                     <Typography sx={{ textAlign: 'center' }}>
