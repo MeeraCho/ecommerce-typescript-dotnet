@@ -1,13 +1,15 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithErrorHandling } from "../../app/api/baseApi";
 import type { User } from "../../app/models/user";
+import { router } from "../../app/routes/Routes";
+import type { LoginSchema } from "../../lib/Schemas/loginSchema";
 
 export const accountApi = createApi({
     reducerPath:'accountApi',
     baseQuery: baseQueryWithErrorHandling,
     tagTypes: ['UserInfo'],
     endpoints: (builder) => ({
-        login: builder.mutation<void, object>({
+        login: builder.mutation<void, LoginSchema>({
             query: (creds) => {
                 return {
                     url: 'login?useCookies=true',
@@ -41,7 +43,12 @@ export const accountApi = createApi({
             query: () => ({
                 url: 'account/logout',
                 method: 'POST'
-            })
+            }),
+            async onQueryStarted(_, {dispatch, queryFulfilled}){
+                await queryFulfilled;
+                dispatch(accountApi.util.invalidateTags(['UserInfo']));
+                router.navigate('/');
+            }
         })
     })
 });
