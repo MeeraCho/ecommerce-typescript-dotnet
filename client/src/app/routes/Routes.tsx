@@ -10,6 +10,7 @@ import ServerError from "../errors/ServerError";
 import BasketPage from "../../features/basket/BasketPage";
 import CheckoutPage from "../../features/checkout/CheckoutPage";
 import LoginForm from "../../features/account/LoginForm";
+import RegisterForm from "../../features/account/RegisterForm";
 
 export const router = createBrowserRouter([
   {
@@ -17,15 +18,16 @@ export const router = createBrowserRouter([
     element: <App />,
     children: [
         {path: '', element: <HomePage />},
-        {path: '/catalog', element: <Catalog />},
-        {path: '/catalog/:id', element: <ProductDetails />},
-        {path: '/about', element: <AboutPage />},
-        {path: '/contact', element: <ContactPage />},
+        {path: 'catalog', element: <Catalog />},
+        {path: 'catalog/:id', element: <ProductDetails />},
+        {path: 'about', element: <AboutPage />},
+        {path: 'contact', element: <ContactPage />},
         {path: 'basket', element: <BasketPage />}, 
         {path: 'checkout', element: <CheckoutPage />},       
-        {path: '/server-error', element: <ServerError />},  
-        {path: 'login', element: <LoginForm />},                	
-        {path: '/not-found', element: <NotFound />},
+        {path: 'server-error', element: <ServerError />},  
+        {path: 'login', element: <LoginForm />},  
+        {path: 'register', element: <RegisterForm />},                	
+        {path: 'not-found', element: <NotFound />},
         {path: '*', element: <Navigate replace to='/not-found' />}        
     ]
   }
