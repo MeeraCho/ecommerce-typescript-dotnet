@@ -1,13 +1,15 @@
 import { LockOutlined } from "@mui/icons-material";
 import { Box, Button, Container, Paper, TextField, Typography } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { loginSchema, type LoginSchema } from "../../lib/Schemas/loginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLoginMutation } from "./accountApi";
+import { useLazyUserInfoQuery, useLoginMutation } from "./accountApi";
 
 export default function LoginForm() {
     const [login, {isLoading}] = useLoginMutation();
+    const [fetchUserInfo] = useLazyUserInfoQuery();    
+    const location = useLocation();
     const { register, handleSubmit, formState:{errors} } = useForm<LoginSchema>({
         mode: 'onChange',
         resolver: zodResolver(loginSchema)
@@ -16,8 +18,9 @@ export default function LoginForm() {
     
 
     const onSubmit = async (data: LoginSchema) => {
-        await login(data);
-        navigation('/catalog');
+        await login(data); // 1. Send login request
+        await fetchUserInfo(); // 2. Fetch current logged-in user info and update global state/cache
+        navigation(location.state?.from || '/catalog'); // 3. Redirect to the originally requested page or fallback to /catalog if there's no value on 'from'
     }
 
     return (

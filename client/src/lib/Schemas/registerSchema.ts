@@ -17,9 +17,6 @@ export const registerSchema = z.object({
 //         .min(6, {
 //             message: 'Password must be at least 6 characters'
 //         })
-//         // .max(10, {
-//         //     message: 'Password must be at most 10 characters'
-//         // })
 //         .refine((password) => /[a-z]/.test(password), {
 //             message: 'Password must contain 1 lowercase character'
 //         })
@@ -29,13 +26,9 @@ export const registerSchema = z.object({
 //         .refine((password) => /\d/.test(password), {
 //             message: 'Password must contain 1 number'
 //         })
-//         .refine(
-//             (password) =>
-//                 /[!@#$%^&*()_+{}[\]:;<>,.?~\\/-]/.test(password),
-//             {
-//                 message: 'Password must contain 1 special character'
-//             }
-//         )
+//         .refine((password) => /[!@#$%^&*()_+{}[\]:;<>,.?~\\/-]/.test(password), {
+//             message: 'Password must contain 1 special character'
+//         })
 // });
 
 export type RegisterSchema = z.infer<typeof registerSchema>;

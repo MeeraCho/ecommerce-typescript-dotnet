@@ -10,6 +10,7 @@ export default function RegisterForm() {
   const [registerUser] = useRegisterMutation();
   const {register, handleSubmit, setError, formState:{errors, isValid, isLoading}} = useForm<RegisterSchema>({
     mode: 'onChange',
+    criteriaMode: "all",
     resolver: zodResolver(registerSchema)
   }); 
 
