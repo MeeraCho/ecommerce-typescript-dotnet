@@ -1037,6 +1037,23 @@
           "lib/net6.0/SQLitePCLRaw.provider.e_sqlite3.dll": {}
         }
       },
+      "Stripe.net/51.2.0-beta.2": {
+        "type": "package",
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.3",
+          "System.Configuration.ConfigurationManager": "9.0.0"
+        },
+        "compile": {
+          "lib/net9.0/Stripe.net.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net9.0/Stripe.net.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "System.CodeDom/9.0.0": {
         "type": "package",
         "compile": {
@@ -2850,6 +2867,30 @@
         "sqlitepclraw.provider.e_sqlite3.nuspec"
       ]
     },
+    "Stripe.net/51.2.0-beta.2": {
+      "sha512": "Aa2vw3/GXVN2RTki8YopX1/zxdVTOAYL9Bg4w/LOrJE33j2k3URUC8x210DZLzZ9qtfLZB/EwULgMKzfu+p0GA==",
+      "type": "package",
+      "path": "stripe.net/51.2.0-beta.2",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "README.md",
+        "icon.png",
+        "lib/net462/Stripe.net.dll",
+        "lib/net462/Stripe.net.xml",
+        "lib/net6.0/Stripe.net.dll",
+        "lib/net6.0/Stripe.net.xml",
+        "lib/net8.0/Stripe.net.dll",
+        "lib/net8.0/Stripe.net.xml",
+        "lib/net9.0/Stripe.net.dll",
+        "lib/net9.0/Stripe.net.xml",
+        "lib/netstandard2.0/Stripe.net.dll",
+        "lib/netstandard2.0/Stripe.net.xml",
+        "stripe.net.51.2.0-beta.2.nupkg.sha512",
+        "stripe.net.nuspec"
+      ]
+    },
     "System.CodeDom/9.0.0": {
       "sha512": "oTE5IfuMoET8yaZP/vdvy9xO47guAv/rOhe4DODuFBN3ySprcQOlXqO3j+e/H/YpKKR5sglrxRaZ2HYOhNJrqA==",
       "type": "package",
@@ -3276,7 +3317,8 @@
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 10.0.3",
       "Microsoft.EntityFrameworkCore.Design >= 10.0.0",
       "Microsoft.EntityFrameworkCore.Sqlite >= 10.0.0",
-      "Microsoft.EntityFrameworkCore.Tools >= 10.0.0"
+      "Microsoft.EntityFrameworkCore.Tools >= 10.0.0",
+      "Stripe.net >= 51.2.0-beta.2"
     ]
   },
   "packageFolders": {
@@ -3337,6 +3379,10 @@
           "Microsoft.EntityFrameworkCore.Tools": {
             "target": "Package",
             "version": "[10.0.0, )"
+          },
+          "Stripe.net": {
+            "target": "Package",
+            "version": "[51.2.0-beta.2, )"
           }
         },
         "imports": [
