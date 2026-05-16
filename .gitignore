@@ -515,6 +515,7 @@ API/appsettings.Development.json
 API/appsettings.Production.json
 API/appsettings.*.json
 
+
 # SQLite / DB files (important)
 *.db
 *.sqlite
