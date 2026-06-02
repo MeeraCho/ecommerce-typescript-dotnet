@@ -40,7 +40,7 @@ public class OrderController(StoreContext context) : BaseApiController
         // 1. get uers's basket
         var basket = await context.Baskets.GetBasketWithItems(Request.Cookies["basketId"]);
 
-        // validate uers's basket 
+            // validate uers's basket 
         if ( basket == null ||                                // Basket doesn't exists
                 basket.Items.Count == 0 ||                    //Basket doesn't contains items
                 string.IsNullOrEmpty(basket.PaymentIntentId)) //Stripe PaymentIntent doesn't exists
@@ -49,19 +49,19 @@ public class OrderController(StoreContext context) : BaseApiController
         // 2. convert basket items to order items 
         var items = CreateOrderItems(basket.Items);
 
-        // validate uers's basket item     
+            // validate uers's basket item     
         if (items == null) return BadRequest("Some items out of stock");
 
         // 3. calculate totals
         var subtotal = items.Sum(x => x.Price * x.Quantity);
         var deliveryFee = CalculateDeliveryFee(subtotal);
             
-            // 4. check for existing order (idempotency)
+        // 4. check for existing order (idempotency)
         var order = await context.Orders
             .Include(x => x.OrderItems) //retrieves all associated OrderItems
             .FirstOrDefaultAsync(x => x.PaymentIntentId == basket.PaymentIntentId);
     
-            // 5. If order does NOT exist, create new order OR update order if exists
+        // 5. If order does NOT exist, create new order OR update order if exists
         if (order == null)
         {
             order = new Order
@@ -75,12 +75,12 @@ public class OrderController(StoreContext context) : BaseApiController
                 PaymentSummary = orderDto.PaymentSummary,  //payment details from the checkout form.        
             };
                     
-                    // Adds the order to EF Core tracking.
+            // Adds the order to EF Core tracking.
             context.Orders.Add(order);
             
             // cleans up
-            context.Baskets.Remove(basket); //The customer's basket is removed from the database because it is no longer needed after the order has been created.
-            Response.Cookies.Delete("basketId"); //The basket cookie is deleted from the user's browser since the basket no longer exists.
+            //context.Baskets.Remove(basket); //The customer's basket is removed from the database because it is no longer needed after the order has been created.
+            //Response.Cookies.Delete("basketId"); //The basket cookie is deleted from the user's browser since the basket no longer exists.
         }
         else 
         {
