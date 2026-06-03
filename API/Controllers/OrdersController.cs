@@ -24,7 +24,7 @@ public class OrderController(StoreContext context) : BaseApiController
     }
 
     [HttpGet]
-    public async Task<ActionResult<OrderDto>> GetOrderDetail(int id)
+    public async Task<ActionResult<OrderDto>> GetOrderDetails(int id)
     {
         var order = await context.Orders
                     .ProjectToDto()
