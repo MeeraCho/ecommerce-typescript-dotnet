@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 [Authorize]
 public class OrderController(StoreContext context) : BaseApiController
 {
-    [HttpGet]
+    [HttpGet] //GET api/orders
     public async Task<ActionResult<List<OrderDto>>> GetOrders()
     {
         var orders = await context.Orders
@@ -23,7 +23,7 @@ public class OrderController(StoreContext context) : BaseApiController
         return orders;
     }
 
-    [HttpGet]
+    [HttpGet] //GET api/orders/1
     public async Task<ActionResult<OrderDto>> GetOrderDetails(int id)
     {
         var order = await context.Orders
@@ -34,34 +34,32 @@ public class OrderController(StoreContext context) : BaseApiController
         return order;
     }
 
-    [HttpPost]
+    [HttpPost] // Post api/orders
     public async Task<ActionResult<Order>> CreateOrder(CreateOrderDto orderDto)
     {
-        // 1. get uers's basket
+        // get uers's basket 
         var basket = await context.Baskets.GetBasketWithItems(Request.Cookies["basketId"]);
+        
+        // validate uers's basket
+        if(basket == null || basket.Items.Count == 0 || string.IsNullOrEmpty(basket.PaymentIntentId))
+            return BadRequest("Basket is empty or not found");
 
-            // validate uers's basket 
-        if ( basket == null ||                                // Basket doesn't exists
-                basket.Items.Count == 0 ||                    //Basket doesn't contains items
-                string.IsNullOrEmpty(basket.PaymentIntentId)) //Stripe PaymentIntent doesn't exists
-            return BadRequest("Basket is empty or not found"); 
-                
-        // 2. convert basket items to order items 
+        // convert basket items to order items
         var items = CreateOrderItems(basket.Items);
 
-            // validate uers's basket item     
+        // validate uers's basket items 
         if (items == null) return BadRequest("Some items out of stock");
 
-        // 3. calculate totals
+        // calculate totals
         var subtotal = items.Sum(x => x.Price * x.Quantity);
         var deliveryFee = CalculateDeliveryFee(subtotal);
-            
-        // 4. check for existing order (idempotency)
-        var order = await context.Orders
-            .Include(x => x.OrderItems) //retrieves all associated OrderItems
-            .FirstOrDefaultAsync(x => x.PaymentIntentId == basket.PaymentIntentId);
-    
-        // 5. If order does NOT exist, create new order OR update order if exists
+
+        // search for an existing order using the Stripe PaymentIntentId - preventing idempotency (duplicate orders from being created)
+        var order = await context.Orders    
+                        .Include(x => x.OrderItems)
+                        .FirstOrDefaultAsync(x => x.PaymentIntentId == basket.PaymentIntentId);
+        
+        // if order does NOT exist → create new order
         if (order == null)
         {
             order = new Order
@@ -72,65 +70,65 @@ public class OrderController(StoreContext context) : BaseApiController
                 Subtotal = subtotal,
                 DeliveryFee = deliveryFee,            
                 PaymentIntentId = basket.PaymentIntentId,   //the Stripe PaymentIntent identifier used to link the order to the payment.
-                PaymentSummary = orderDto.PaymentSummary,  //payment details from the checkout form.        
+                PaymentSummary = orderDto.PaymentSummary,  //payment details from the checkout form.  
             };
-                    
-            // Adds the order to EF Core tracking.
-            context.Orders.Add(order);
-            
-            // cleans up
-            //context.Baskets.Remove(basket); //The customer's basket is removed from the database because it is no longer needed after the order has been created.
-            //Response.Cookies.Delete("basketId"); //The basket cookie is deleted from the user's browser since the basket no longer exists.
+
+            context.Orders.Add(order); // Adds the order to EF Core tracking
         }
-        else 
+        else
         {
-            // If order already exists → update items
-            order.OrderItems = items;
-        }   
-    
-            // 6. Save changes to database
+            context.Orders.Add(order);
+        }
+
+        // save changes to database
         var result = await context.SaveChangesAsync() > 0;
-            
-            // 7. Handle failure - if SaveChangesAsync() returns 0, no changes were saved to the database.
-        if (!result) return BadRequest("Something went wrong while creating the order.r");
-            
-            // 8. Return success response	
+
+        // if SaveChangesAsync() returns 0, no changes were saved to the db
+        if (!result) return BadRequest("Something went wrong while creating the order");
+
         return CreatedAtAction(
-                    nameof(GetOrderDetails), //specifies the action that can retrieve the resource
-                    new { id = order.Id },   //supplies route values
-                    order.ToDto());          //return newly created order data
+            nameof(GetOrderDetails), //specifies the action that can retrieve the resource
+            new { id = order.Id }, // supplies route values
+            order.ToDto());        // return newly created order
     }
 
-        private long CalculateDeliveryFee(long subtotal)
+    private long CalculateDeliveryFee(long subtotal)
     {
         return subtotal > 10000 ? 0 : 500;
     }
 
-
     private List<OrderItem>? CreateOrderItems(List<BasketItem> items)
     {
+        // Create a new empty list to store the converted order items
         var orderItems = new List<OrderItem>();
 
+		// Loop through each item in the user's basket
         foreach (var item in items)
         {
-            if (item.Product.QuantityInStock < item.Quantity)
+            // Check whether there is enough stock available
+            if(item.Product.QuantityInStock < item.Quantity)
                 return null;
-
+            
+            // Create a new OrderItem from the BasketItem
             var orderItem = new OrderItem
             {
+                // Store a snapshot of product information at the time of purchase
                 ItemOrdered = new ProductItemOrdered
                 {
                     ProductId = item.ProductId,
                     PictureUrl = item.Product.PictureUrl,
                     Name = item.Product.Name
                 },
-                Price = item.Product.Price,
-                Quantity = item.Quantity
+                Price = item.Product.Price, // Save the product price at the time the order is created
+                Quantity = item.Quantity    // Save how many units the customer purchased
             };
+            
+            // Add the newly created order item to the list
             orderItems.Add(orderItem);
 
+            // Reduce the available product stock quantity
             item.Product.QuantityInStock -= item.Quantity;
-        }
+        }  
 
         return orderItems;
     }

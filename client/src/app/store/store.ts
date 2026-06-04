@@ -8,6 +8,7 @@ import { basketApi } from "../../features/basket/basketApi";
 import { catalogSlice } from "../../features/catalog/catalogSlice";
 import { accountApi } from "../../features/account/accountApi";
 import { checkoutApi } from "../../features/checkout/checkoutApi";
+import { orderApi } from "../../features/orders/orderApi";
 
 // store 만들기 
 export const store = configureStore({
@@ -18,6 +19,7 @@ export const store = configureStore({
         [basketApi.reducerPath]: basketApi.reducer,
         [accountApi.reducerPath]: accountApi.reducer,
         [checkoutApi.reducerPath]: checkoutApi.reducer,
+        [orderApi.reducerPath]: orderApi.reducer,
         ui: uiSlice.reducer,
         catalog: catalogSlice.reducer
     },
@@ -28,6 +30,7 @@ export const store = configureStore({
             basketApi.middleware,
             accountApi.middleware,
             checkoutApi.middleware,
+            orderApi.middleware,
         )
 })
 
