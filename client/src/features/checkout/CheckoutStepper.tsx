@@ -4,19 +4,20 @@ import { useState } from "react";
 import Review from "./Review";
 import type { Address } from "../../app/models/user";
 import { useFetchAddressQuery, useUpdateUserAddressMutation } from "../account/accountApi";
-import type { StripeAddressElementChangeEvent } from "@stripe/stripe-js";
-import type { StripePaymentElementChangeEvent } from "@stripe/stripe-js";
+import type { StripeAddressElementChangeEvent, StripePaymentElementChangeEvent } from "@stripe/stripe-js";
 import { useBasket } from "../../lib/hooks/useBasket";
 import { currencyFormat } from "../../lib/utils";
 import type { ConfirmationToken } from "@stripe/stripe-js";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
+import { useCreateOrderMutation } from "../orders/orderApi";
 
 const steps = ['Address', 'Payment', 'Review']
 
 export default function CheckoutStepper() {
     const [activeStep, setActiveStep] = useState(0);
+    const [createOrder] = useCreateOrderMutation();
     const {data: {name, ...restAddress} = {} as Address, isLoading} = useFetchAddressQuery(); 
     const [updateAddress] = useUpdateUserAddressMutation();
     const [saveAddressChecked, setSaveAddressChecked] = useState(false);
@@ -32,7 +33,7 @@ export default function CheckoutStepper() {
 
     const handleNext = async () => {
         // 현재 Address step에 있고, 사용자가 “Save as default address” 체크했고, Stripe elements가 준비되어 있으면 
-		// →Stripe에서 현재 주소를 가져온 후 DB에 저장한다
+		// Stripe에서 현재 주소를 가져온 후 DB에 저장한다
         if (activeStep === 0 && saveAddressChecked && elements){
             const address = await getStripeAddress(); //address 가져오기 
             if(address) await updateAddress(address); //DB에 저장 
@@ -61,6 +62,10 @@ export default function CheckoutStepper() {
         try {
             if (!confirmationToken || !basket?.clientSecret)
                 throw new Error('Unable to process payment');
+            
+            const orderModel = await createOrderModel();
+            const orderResult = await createOrder(orderModel);
+
             const paymentResult = await stripe?.confirmPayment({
                 clientSecret: basket.clientSecret,
                 redirect: 'if_required',
@@ -70,7 +75,7 @@ export default function CheckoutStepper() {
             });
 
             if (paymentResult?.paymentIntent?.status === 'succeeded'){
-                navigate('/checkout/success');
+                navigate('/checkout/success', {state: orderResult});
                 clearBasket();
             } else if (paymentResult?.error) {
                 throw new Error(paymentResult.error.message);
@@ -97,13 +102,20 @@ export default function CheckoutStepper() {
 
     const handlePaymentChange = (event: StripePaymentElementChangeEvent) => {
         setPaymentComplete(event.complete)
-    }    
+    }   
+    
+    const createOrderModel = async () => {
+        const shippingAddress = await getStripeAddress();
+        const paymentSummary = confirmationToken?.payment_method_preview.card;
+        if ( !shippingAddress || !paymentSummary) throw new Error('Problem creating order');
+        return {shippingAddress, paymentSummary} 
+    }
 
     const getStripeAddress = async () => {
         const addressElement = elements?.getElement('address'); //지금 화면의 <AddressElement /> 가져오기 
         if (!addressElement) return null;
-        const {value: {name, address}} = await addressElement.getValue();
 
+        const {value: {name, address}} = await addressElement.getValue();
         if (name && address) return {...address, name}
         return null;
     }
@@ -173,3 +185,4 @@ export default function CheckoutStepper() {
         </Paper>
 	)
 }
+

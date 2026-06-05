@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 
 [Authorize]
-public class OrderController(StoreContext context) : BaseApiController
+public class OrdersController(StoreContext context) : BaseApiController
 {
     [HttpGet] //GET api/orders
     public async Task<ActionResult<List<OrderDto>>> GetOrders()
