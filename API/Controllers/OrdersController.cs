@@ -23,7 +23,7 @@ public class OrdersController(StoreContext context) : BaseApiController
         return orders;
     }
 
-    [HttpGet] //GET api/orders/1
+    [HttpGet("{id:int}")] //GET api/orders/1
     public async Task<ActionResult<OrderDto>> GetOrderDetails(int id)
     {
         var order = await context.Orders

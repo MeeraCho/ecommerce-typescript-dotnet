@@ -2,6 +2,7 @@ import { Typography, Container, Paper, Box, Divider, Button } from "@mui/materia
 import { Link, useLocation } from "react-router-dom";
 import type { Order } from "../../app/models/order";
 import { currencyFormat, formatAddressString, formatPaymentString } from "../../lib/utils";
+import { format } from "date-fns";
 
 export default function CheckoutSuccess() {
   const { state } = useLocation();
@@ -20,9 +21,9 @@ export default function CheckoutSuccess() {
           <Box display='flex' justifyContent='space-between'>
             <Typography variant='body2' color='textSecondary'>
               Order Date
-            </Typography>
+            </Typography> 
             <Typography variant='body2' fontWeight='bold'>
-              {order.orderDate}
+              {format(order.orderDate, 'dd MMM yyyy')}
             </Typography>
           </Box>
           <Divider />
