@@ -54,6 +54,7 @@ public class OrdersController(StoreContext context) : BaseApiController
         var subtotal = items.Sum(x => x.Price * x.Quantity);
         var deliveryFee = CalculateDeliveryFee(subtotal);
 
+        // Prevent Duplicate Orders. idempotency - Running the same operation multiple times produces the same final result.
         // search for an existing order using the Stripe PaymentIntentId - preventing idempotency (duplicate orders from being created)
         var order = await context.Orders    
                         .Include(x => x.OrderItems)

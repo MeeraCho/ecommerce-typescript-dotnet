@@ -43,6 +43,7 @@ public class PaymentsController(
     public async Task<ActionResult> StripeWebhook()
     {
         var json = await new StreamReader(Request.Body).ReadToEndAsync();
+
         try
         {
             var stripeEvent = ConstructStripeEvent(json);
@@ -77,7 +78,8 @@ public class PaymentsController(
             return EventUtility.ConstructEvent(
                 json,
                 Request.Headers["Stripe-Signature"],
-                config["StripeSettings:WhSecret"]
+                config["StripeSettings:WhSecret"],
+                throwOnApiVersionMismatch: false
             );
         }
         catch (Exception ex)
@@ -89,6 +91,7 @@ public class PaymentsController(
 
     private async Task HandlePaymentIntentSucceeded(PaymentIntent intent)
     {
+
         // Finds the order that matches the Stripe PaymentIntent ID
         var order = await context.Orders
             .Include(x => x.OrderItems)
@@ -117,11 +120,20 @@ public class PaymentsController(
     //restores product stock when a payment fails
     private async Task HandlePaymentIntentFailed(PaymentIntent intent)
     {
+        var orders = await context.Orders.ToListAsync();
+
+        foreach (var o in orders)
+        {
+            Console.WriteLine($"ORDER {o.Id}");
+            Console.WriteLine($"DB INTENT: {o.PaymentIntentId}");
+        }
+
         // Finds the order that matches the Stripe PaymentIntent ID
         var order = await context.Orders
                     .Include(x => x.OrderItems) //Load order + items
                     .FirstOrDefaultAsync(x => x.PaymentIntentId == intent.Id) 
                         ?? throw new Exception("Order Not Found"); 
+
         // inventory rollback
         foreach (var item in order.OrderItems)
         {
