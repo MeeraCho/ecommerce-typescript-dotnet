@@ -25,7 +25,9 @@ export const baseQueryWithErrorHandling = async (
   extraOptions: object,
 ) => {
   api.dispatch(startLoading());
-  await sleep();
+
+  if (import.meta.env.DEV) await sleep();
+
   const result = await customBaseQuery(args, api, extraOptions); // actural API Request
   api.dispatch(stopLoading());
 

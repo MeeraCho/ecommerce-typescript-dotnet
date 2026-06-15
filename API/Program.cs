@@ -30,6 +30,10 @@ var app = builder.Build();
 
 // 4.Middleware pipeline - configure the HTTP request pipeline
 app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseDefaultFiles();
+app.UseStaticFiles(); 
+
 app.UseCors(opt => 
 {
     opt.AllowAnyHeader()
@@ -44,6 +48,7 @@ app.UseAuthorization();
 // 5.Map endpoints
 app.MapControllers();
 app.MapGroup("api").MapIdentityApi<User>(); // api/login
+app.MapFallbackToController("Index", "Fallback");
 
 // 6.Initialize database
 DbInitializer.InitDb(app);
