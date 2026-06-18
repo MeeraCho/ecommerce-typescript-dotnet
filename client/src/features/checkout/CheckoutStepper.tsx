@@ -2,7 +2,6 @@ import { Box, Button, Checkbox, FormControlLabel, Typography, Paper, Step, StepL
 import { AddressElement, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { useState } from "react";
 import Review from "./Review";
-import type { Address } from "../../app/models/user";
 import { useFetchAddressQuery, useUpdateUserAddressMutation } from "../account/accountApi";
 import type { StripeAddressElementChangeEvent, StripePaymentElementChangeEvent } from "@stripe/stripe-js";
 import { useBasket } from "../../lib/hooks/useBasket";
@@ -21,8 +20,6 @@ export default function CheckoutStepper() {
     
     //const {data: {name, ...restAddress} = {} as Address, isLoading} = useFetchAddressQuery(); 
     const { data, isLoading } = useFetchAddressQuery();
-    const { name, ...restAddress} = data || {} as Address;
-
     const [updateAddress] = useUpdateUserAddressMutation();
     const [saveAddressChecked, setSaveAddressChecked] = useState(false);
     const elements = useElements();
@@ -34,6 +31,11 @@ export default function CheckoutStepper() {
     const [submitting, setSubmitting] = useState(false);
     const {basket} = useBasket();
     const navigate = useNavigate();
+
+    let name, restAddress;
+    if (data) {
+        ({name, ...restAddress} = data);
+    }
 
     const handleNext = async () => {
         // 현재 Address step에 있고, 사용자가 “Save as default address” 체크했고, Stripe elements가 준비되어 있으면 
