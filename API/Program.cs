@@ -51,7 +51,7 @@ app.MapGroup("api").MapIdentityApi<User>(); // api/login
 app.MapFallbackToController("Index", "Fallback");
 
 // 6.Initialize database
-DbInitializer.InitDb(app);
+await DbInitializer.InitDb(app);
 
 // 7.Run the app
 app.Run();
