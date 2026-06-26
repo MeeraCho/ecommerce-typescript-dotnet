@@ -27,8 +27,8 @@ jobs:
         run: | 
           cd client 
           npm install --legacy-peer-deps
-          npm run build 
-          
+          npm run build    
+
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
