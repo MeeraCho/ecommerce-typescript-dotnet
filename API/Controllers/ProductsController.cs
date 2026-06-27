@@ -3,6 +3,7 @@ using API.DTOs;
 using API.Entities;
 using API.Extensions;
 using API.RequestHelpers;
+using API.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
-    public class ProductsController(StoreContext context, IMapper mapper) : BaseApiController
+    public class ProductsController(StoreContext context, IMapper mapper, ImageService imageService) : BaseApiController
     {
         [HttpGet]
         public async Task<ActionResult<List<Product>>> GetProducts([FromQuery] ProductParams productParams)
@@ -53,6 +54,20 @@ namespace API.Controllers
         {
             
             var product = mapper.Map<Product>(productDto);
+
+
+            if (productDto.File != null)
+            {
+                var imageResult = await imageService.AddImageAsync(productDto.File);
+
+                if (imageResult.Error != null)
+                {
+                    return BadRequest(imageResult.Error.Message);
+                }
+
+                product.PictureUrl = imageResult.SecureUrl.AbsoluteUri;
+                product.PublicId = imageResult.PublicId;
+            }            
             
             context.Products.Add(product);
             var result = await context.SaveChangesAsync() > 0;

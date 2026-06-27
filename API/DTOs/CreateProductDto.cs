@@ -14,8 +14,8 @@ public class CreateProductDto
     public long Price { get; set; }
 
     [Required]
-    public string PictureUrl { get; set; } = string.Empty;
-    //public IFormFile File { get; set; } = null;
+    //public string PictureUrl { get; set; } = string.Empty;
+    public IFormFile File { get; set; } = null!;
 
     [Required]
     public required string Type { get; set; }
