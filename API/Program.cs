@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // 2.Register services(Dependency Injection) add services to the container
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary"));
 builder.Services.AddControllers();
 builder.Services.AddDbContext<StoreContext>(opt => 
 {
