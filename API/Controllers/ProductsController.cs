@@ -86,6 +86,20 @@ namespace API.Controllers
 
             mapper.Map(updateProductDto, product);
 
+            if (updateProductDto.File != null) 
+            {
+                var imageResult = await imageService.AddImageAsync(updateProductDto.File);
+
+                if (imageResult.Error != null)
+                    return BadRequest(imageResult.Error.Message);
+
+                if (!string.IsNullOrEmpty(product.PublicId))
+                    await imageService.DeleteImageAsync(product.PublicId);
+
+                product.PictureUrl = imageResult.SecureUrl.AbsoluteUri;
+                product.PublicId = imageResult.PublicId;
+            }            
+
             var result = await context.SaveChangesAsync() > 0;
 
             if (result) return NoContent();
@@ -101,6 +115,9 @@ namespace API.Controllers
 
             if (product == null) return NotFound();
 
+            if (!string.IsNullOrEmpty(product.PublicId))
+                    await imageService.DeleteImageAsync(product.PublicId);
+
             context.Products.Remove(product);
 
             var result = await context.SaveChangesAsync() > 0;
@@ -108,6 +125,6 @@ namespace API.Controllers
             if (result) return Ok();
 
             return BadRequest("Problem deleting the product");
-        }
+        }      
     }
 }
