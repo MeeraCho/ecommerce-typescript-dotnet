@@ -3,12 +3,17 @@ import { createProductSchema, type CreateProductSchema } from "../../lib/Schemas
 import { useForm } from "react-hook-form"
 import { Paper, Typography, Grid, Box, Button } from "@mui/material"
 import AppTextInput from "../../app/shared/components/AppTextInput"
+import { useFetchFiltersQuery } from "../catalog/catalogApi"
+import AppSelectInput from "../../app/shared/components/AppSelectInput"
 
 export default function ProductForm() {
   const { control, handleSubmit } = useForm<CreateProductSchema>({
     mode: 'onTouched', 
     resolver: zodResolver(createProductSchema) //검증 엔진을 Zod로. React Hook Form 기본 validation은 너무 간단
   })
+
+  const { data } = useFetchFiltersQuery();
+
   const onSubmit = (data: CreateProductSchema) => console.log(data)
 
   return (
@@ -24,13 +29,17 @@ export default function ProductForm() {
               <AppTextInput control={control} name="name" label="Product name" />
           </Grid>
           <Grid size={6}>
-            <AppTextInput control={control} name="brand" label="Brand" />
+            {data?.brands && 
+              <AppSelectInput items={data.brands} control={control} name="brand" label="Brand" />
+            }
           </Grid>
           <Grid size={6}>
-            <AppTextInput control={control} name="type" label="Type" />
+            {data?.brands && 
+              <AppSelectInput items={data.types} control={control} name="type" label="Type"  />
+            }
           </Grid>
           <Grid size={6}>
-            <AppTextInput control={control} name="price" label="Price" type="number" />
+            <AppTextInput control={control} name="price" label="Price in cents" type="number" />
           </Grid>
           <Grid size={6}>
             <AppTextInput control={control} name="quantityInStock" label="Quantity in Stock" type="number"/>
