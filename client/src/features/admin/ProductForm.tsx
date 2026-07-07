@@ -5,13 +5,15 @@ import { Paper, Typography, Grid, Box, Button } from "@mui/material"
 import AppTextInput from "../../app/shared/components/AppTextInput"
 import { useFetchFiltersQuery } from "../catalog/catalogApi"
 import AppSelectInput from "../../app/shared/components/AppSelectInput"
+import AppDropzone from "../../app/shared/components/AppDropzone"
 
 export default function ProductForm() {
-  const { control, handleSubmit } = useForm<CreateProductSchema>({
+  const { control, handleSubmit, watch } = useForm<CreateProductSchema>({
     mode: 'onTouched', 
     resolver: zodResolver(createProductSchema) //검증 엔진을 Zod로. React Hook Form 기본 validation은 너무 간단
   })
 
+  const watchFile = watch('file');
   const { data } = useFetchFiltersQuery();
 
   const onSubmit = (data: CreateProductSchema) => console.log(data)
@@ -47,8 +49,11 @@ export default function ProductForm() {
           <Grid size={12}>
             <AppTextInput control={control} name="description" label="Description" multiline rows={4}/>
           </Grid>
-          <Grid size={12}>
-            <AppTextInput control={control} name="file" label="Image" />
+          <Grid size={12} display='flex' justifyContent='space-between' alignItems='center'>
+            <AppDropzone name="file" control={control} />
+            {watchFile && (
+	            <img src={watchFile.preview} alt='preview of image' style={{maxHeight: 200}} />
+	          )}
           </Grid>            
         </Grid>
 
