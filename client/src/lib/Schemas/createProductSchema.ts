@@ -36,8 +36,7 @@ export const createProductSchema = z.object({
         
     pictureUrl: z.string().optional(),
     
-    file: fileSchema
-    // file: fileSchema.optional()
+    file: fileSchema.optional()
     
 }).refine((data) => data.pictureUrl || data.file, {
     message: 'Please provide an image',
