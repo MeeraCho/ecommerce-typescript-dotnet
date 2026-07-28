@@ -8,6 +8,7 @@ import { setPageNumber } from "../catalog/catalogSlice";
 import ProductForm from "./ProductForm";
 import { useState } from "react";
 import type { Product } from "../../app/models/product";
+import { useDeleteProductMutation } from "./adminApi";
 
 export default function InventoryPage() {
     const productParams = useAppSelector(state => state.catalog);  
@@ -15,10 +16,20 @@ export default function InventoryPage() {
     const dispatch = useAppDispatch(); 
     const [editMode, setEditMode] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    const [deleteProduct] = useDeleteProductMutation();
 
     const handleSelectProduct = (product: Product) => {
         setSelectedProduct(product);
         setEditMode(true);
+    }
+
+    const handleDeleteProduct = async (id: number) => {
+        try {
+            await deleteProduct(id);
+            refetch();
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     if (editMode) return <ProductForm 
@@ -69,7 +80,7 @@ export default function InventoryPage() {
                         <TableCell align="center">{product.quantityInStock}</TableCell>
                         <TableCell align="right">
                             <Button onClick={() => handleSelectProduct(product)} startIcon={<Edit />} />
-                            <Button startIcon={<Delete />} color="error" />
+                            <Button onClick={() => handleDeleteProduct(product.id)} startIcon={<Delete />} color="error" />
                         </TableCell>
                     </TableRow>
                 ))}
