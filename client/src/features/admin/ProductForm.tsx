@@ -1,5 +1,6 @@
 import { Box, Paper, Typography, Grid, Button } from "@mui/material"
-import { useForm } from "react-hook-form"
+import { LoadingButton } from "@mui/lab"
+import { useForm, type FieldValues } from "react-hook-form"
 import { createProductSchema, type CreateProductSchema } from "../../lib/Schemas/createProductSchema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import AppTextInput from "../../app/shared/components/AppTextInput"
@@ -8,20 +9,26 @@ import AppSelectInput from "../../app/shared/components/AppSelectInput"
 import AppDropzone from "../../app/shared/components/AppDropzone"
 import { useEffect } from "react"
 import type { Product } from "../../app/models/product"
+import { useCreateProductMutation, useUpdateProductMutation } from "./adminApi"
+import { handleApiError } from "../../lib/utils"
 
 type Props = {
     setEditMode: (value: boolean) => void;
     product: Product | null
+    refetch: () => void
+    setSelectedProduct: (value: Product | null) => void;
 }
 
-export default function ProductForm({setEditMode, product}: Props) {
-  const { control, handleSubmit, watch, reset } = useForm<CreateProductSchema>({
+export default function ProductForm({setEditMode, product, refetch, setSelectedProduct }: Props) {
+  const { control, handleSubmit, watch, reset, setError, formState: {isSubmitting} } = useForm<CreateProductSchema>({
     mode: 'onTouched',
     resolver: zodResolver(createProductSchema)
   })
 
   const watchFile = watch('file');
   const { data } = useFetchFiltersQuery();
+  const [createProduct] = useCreateProductMutation();
+  const [updateProduct] = useUpdateProductMutation();
 
   useEffect(() => {
     if (product) reset(product);
@@ -31,7 +38,36 @@ export default function ProductForm({setEditMode, product}: Props) {
     }
 	}, [product, reset, watchFile]);
 
-  const onSubmit = (data: CreateProductSchema) => console.log(data)  
+  const createFormData = (items: FieldValues) => {
+      const formData = new FormData();
+      
+      for (const key in items) {
+          formData.append(key, items[key])
+      }
+
+      return formData;
+  }	  
+
+  const onSubmit = async (data: CreateProductSchema) => {
+    try {
+      const formData = createFormData(data);
+      // if (watchFile) formData.append('file', watchFile);
+
+      if (product) await updateProduct({id: product.id, data: formData}).unwrap();
+      else await createProduct(formData).unwrap();
+      
+      setEditMode(false);
+      setSelectedProduct(null);
+      refetch();      
+    } catch (error) {
+      console.log(error);  
+      handleApiError<CreateProductSchema>(
+        error, 
+        setError, 
+        ['brand', 'description', 'file', 'name', 'pictureUrl', 'price', 'quantityInStock', 'type']
+      );      
+    }
+  }
   
   return (
     <Box component={Paper} sx={{p: 4, maxWidth: 'lg', mx: 'auto'}}>
@@ -67,26 +103,32 @@ export default function ProductForm({setEditMode, product}: Props) {
           <Grid size={12} display='flex' justifyContent='space-between' alignItems='center'>
             <AppDropzone name="file" control={control} />
             {
-              watchFile ? (
+              watchFile?.preview ? (
                 <img 
                   src = {watchFile.preview}
                   alt = 'preview of image'
                   style = {{ maxHeight: 200}}
                 />
-              ): (
+              ): product?.pictureUrl ? (
                 <img 
                   src = {product?.pictureUrl}
                   alt = 'preview of image'
                   style = {{ maxHeight: 200}}
                 />
-              )
+              ) : null 
             }
           </Grid>                                                                                                                     
         </Grid>
 
         <Box display='flex' justifyContent='space-between' sx={{mt: 3}}>
-          <Button onClick={() => setEditMode(false)} variant='contained' color='inherit'>Cancel</Button>
-          <Button variant='contained' color='success' type='submit'>Submit</Button>
+          <Button onClick={() => {
+                      setEditMode(false)
+                      setSelectedProduct(null)
+                    }} 
+                  variant='contained' 
+                  color='inherit'
+          >Cancel</Button>
+          <LoadingButton loading={isSubmitting} variant='contained' color='success' type='submit'>Submit</LoadingButton>
         </Box>
       </form>      
     </Box>
